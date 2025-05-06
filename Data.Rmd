@@ -26,8 +26,9 @@ library(ggeffects)
 ## Intro
 
 ```{r, warning=FALSE, message=FALSE}
-df <- read_csv("Wushu_Malaysia_1yr_Jumps.csv")
+source("R/load_data.R")
 
+df_jump <- load_jump_data()
 df <- df %>% select_if(~ !all(is.na(.)))
 
 df <- df %>% select(-TestId)
@@ -63,7 +64,7 @@ df
 
 
 ```{r, message=FALSE}
-Demographics <- read_csv("Demographics.csv")
+df_demo <- load_demographics()
 
 Demographics <- janitor::clean_names(Demographics)
 
