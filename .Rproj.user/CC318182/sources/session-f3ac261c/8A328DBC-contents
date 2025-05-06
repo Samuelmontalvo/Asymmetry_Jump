@@ -48,7 +48,10 @@ print("Libraries loaded successfully.")
 ## Load Data
 
 ```{r}
+source("R/load_data.R")
 
+df_jump <- load_jump_data()
+df_demo <- load_demographics()
 ```
 
 
