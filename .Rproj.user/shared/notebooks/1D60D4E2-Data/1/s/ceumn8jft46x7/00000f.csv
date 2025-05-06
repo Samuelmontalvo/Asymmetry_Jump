@@ -1,0 +1,2 @@
+"0","df3 <- inner_join(df, Demographics, by=c(""name""))"
+"0","df3"

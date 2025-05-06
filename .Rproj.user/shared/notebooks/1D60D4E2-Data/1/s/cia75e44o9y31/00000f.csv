@@ -1,0 +1,8 @@
+"0","table1 <- first_observation_df %>% "
+"0","  ungroup() %>% select(Age,mass,jump_height_cm,m_rsi ,sex)"
+"0",""
+"0","tbl_summary(table1, by = sex,"
+"0","            label = list(Age ~ ""Age (yrs)"", mass ~ ""Body Mass (kg)"","
+"0","                         jump_height_cm ~ ""Jump Height (cm)"","
+"0","                         m_rsi ~ ""Reactive Strength Index Modified"")) %>%"
+"0","                         add_difference() %>% modify_caption(""Table 1"")"
