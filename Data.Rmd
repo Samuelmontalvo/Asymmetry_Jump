@@ -439,7 +439,7 @@ summary(model_all)
 
 ```{r, fig.height=10}
 check_model(model_all)
-```
+``` 
 
 ```{r}
 tab_model(model_all, show.aic = TRUE)
