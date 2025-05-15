@@ -1,0 +1,6 @@
+"0","#mass"
+"0","model1m <- lmer(jump_height_cm ~ week*Index1  + "
+"0","                  mass  + (1|name) + (1 + countermovement_depth|session_id), data=df)"
+"0",""
+"0","#no mass"
+"0","model1nom <- lmer(jump_height_cm ~ week*Index1  + (1|name) + (1 + countermovement_depth|session_id), data=df)"

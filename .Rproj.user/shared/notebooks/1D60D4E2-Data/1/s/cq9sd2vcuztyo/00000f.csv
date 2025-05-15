@@ -1,0 +1,6 @@
+"0","#age"
+"0","model1a <- lmer(jump_height_cm ~ week*Index1  + "
+"0","                  Age  + (1|name) + (1 + countermovement_depth|session_id), data=df)"
+"0",""
+"0","#no age"
+"0","model1noa <- lmer(jump_height_cm ~ week*Index1  + (1|name) + (1 + countermovement_depth|session_id), data=df)"

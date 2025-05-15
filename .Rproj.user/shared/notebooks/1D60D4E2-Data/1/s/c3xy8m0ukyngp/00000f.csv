@@ -1,0 +1,5 @@
+"0","df <- df %>% filter(type == ""Countermovement Jump"")"
+"0",""
+"0","df <- df[is.na(df$tags) | df$tags == '' | df$tags == 'Pre', ]"
+"0",""
+"0","df"
