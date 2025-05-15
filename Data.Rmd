@@ -62,7 +62,6 @@ df$week <- isoweek(df$date)
 df
 ```
 
-
 ```{r, message=FALSE}
 df_demo <- load_demographics()
 
@@ -77,7 +76,6 @@ Demographics$DOB <- dmy(Demographics$DOB)
 Demographics
 ```
 
-
 ```{r}
 df2 <- inner_join(df, Demographics, by=c("name"))
 
@@ -87,7 +85,6 @@ df2
 ```{r}
 names(df)
 ```
-
 
 ```{r}
 library(lubridate)
@@ -103,26 +100,18 @@ df2$Age <- ifelse(!is.na(df2$DOB), interval(df2$DOB, df2$date) / years(1), NA)
 df2 %>% select(date, name, DOB, Age)
 ```
 
-
-
 ```{r}
 df3 <- inner_join(df, Demographics, by=c("name"))
 df3
 ```
 
-
 ```{r}
 table1(~ type + tags,data=df3)
 ```
 
-
 ```{r}
 df <- df2
 ```
-
-
-
-
 
 ```{r}
 df <- df %>% filter(type == "Countermovement Jump")
@@ -131,9 +120,6 @@ df <- df[is.na(df$tags) | df$tags == '' | df$tags == 'Pre', ]
 
 df
 ```
-
-
-
 
 ```{r}
 df <- df %>% mutate(mass = system_weight/9.81, jump_height_cm = jump_height*100)
@@ -147,8 +133,6 @@ first_observation_df <- df %>%
 table1(~ week + Age + mass + jump_height_cm + m_rsi | sex, data=first_observation_df)
 ```
 
-
-
 ```{r}
 table1 <- first_observation_df %>% 
   ungroup() %>% select(Age,mass,jump_height_cm,m_rsi ,sex)
@@ -159,8 +143,6 @@ tbl_summary(table1, by = sex,
                          m_rsi ~ "Reactive Strength Index Modified")) %>%
                          add_difference() %>% modify_caption("Table 1")
 ```
-
-
 
 ```{r,}
 df <- df %>%
@@ -184,8 +166,6 @@ p1
 #ggsave("Jump_time.png")
 ```
 
-
-
 ```{r}
 # Plot the data
 p2 <- df %>%
@@ -203,7 +183,6 @@ p2
 ggsave("mass.png")
 ```
 
-
 ```{r}
 p2 <- df %>%
   ggplot(aes(x = week, y = mass, group = athlete, color = athlete)) +  # Group by athlete for individual trajectories
@@ -219,7 +198,6 @@ p2 <- df %>%
 
 p2
 ```
-
 
 ```{r}
 df <- df %>% mutate(jump_height_cm = jump_height * 100)
@@ -253,7 +231,6 @@ p1 <- df %>%
        y = "Mean Jump Height (cm)")
 p1
 ```
-
 
 ```{r}
 p2 <- df %>%
@@ -295,13 +272,9 @@ p4 <- df %>%
   theme(legend.position = "none")
 ```
 
-
 ```{r, fig.height=10, warning=FALSE}
 ggarrange(p2,p3,p4,ncol = 1)
 ```
-
-
-
 
 ```{r}
 # Determine A as the max value between right_avg_propulsive_force and left_avg_propulsive_force
@@ -324,7 +297,6 @@ df$Index4 <- ifelse(df$A > 0 & df$B > 0,
 
 df$week <- as.numeric(as.Date(df$date) - min(as.Date(df$date))) / 7
 ```
-
 
 ```{r}
 p5 <- df %>%
@@ -368,7 +340,6 @@ p8 <- df %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1))
 ```
 
-
 ```{r, fig.height=10,fig.width=8, warning =FALSE}
 ggarrange(p1,p5,p6,p7,p8, ncol=1)
 ```
@@ -376,7 +347,6 @@ ggarrange(p1,p5,p6,p7,p8, ncol=1)
 ```{r}
 df_filter <- df %>% filter(Index1 < 30)
 ```
-
 
 ```{r, message=FALSE, fig.height=8}
 ps_1 <- df %>%
@@ -405,7 +375,6 @@ ps_4 <- df %>%
 
 ggarrange(ps_1,ps_2,ps_3,ps_4)
 ```
-
 
 ```{r, message=FALSE, fig.height=8}
 ps_1 <- df %>%
@@ -436,10 +405,10 @@ ggarrange(ps_1,ps_2,ps_3,ps_4)
 
 ```
 
-
 # Covariates
 
 ## Mass
+
 ```{r}
 #mass
 model1m <- lmer(jump_height_cm ~ week*Index1  + 
@@ -468,12 +437,7 @@ model1noa <- lmer(jump_height_cm ~ week*Index1  + (1|name) + (1 + countermovemen
 anova(model1a, model1noa)
 ```
 
-
-
-
 # Jump Height
-
-
 
 ```{r}
 model_all <- lmer(jump_height_cm ~ week * Index1*sex + 
@@ -481,19 +445,19 @@ model_all <- lmer(jump_height_cm ~ week * Index1*sex +
                     mass  + (1 + countermovement_depth |name), data=df)
 summary(model_all)
 ```
+
 ```{r, fig.height=10}
 check_model(model_all)
 ```
-
 
 ```{r}
 tab_model(model_all, show.aic = TRUE)
 ```
 
-
 ```{r}
 plot_model(model_all)
 ```
+
 AGE and SEX were REMOVED FRO MODELS SINCE THE COEFFICIENTS ARE CLOSE TO 0.
 
 ```{r}
@@ -522,7 +486,6 @@ tab_model(model1,model2,model3,model4, show.est = TRUE, collapse.ci = TRUE,p.sty
   show.p = TRUE )
 ```
 
-
 ```{r,fig.width=8}
 preds <-  predict_response(model2, terms = c("week","Index2", "sex"))
 # Plotting the predictions
@@ -547,7 +510,6 @@ p2_index <- plot(preds, show_ci=FALSE,one_plot = TRUE,facets = FALSE) + theme_mi
 p2_index
 ```
 
-
 ```{r}
 preds <-  predict_response(model3, terms = c("week","Index3", "sex"))
 # Plotting the predictions
@@ -560,8 +522,6 @@ p2_index <- plot(preds, show_ci=FALSE,one_plot = TRUE,facets = FALSE) + theme_mi
 p2_index
 ```
 
-
-
 ```{r, fig.width=10}
 ggarrange(p1,nrow = 2,
           (ggarrange(p1_index,p2_index,ncol = 2)),
@@ -569,14 +529,10 @@ ggarrange(p1,nrow = 2,
           )
 ```
 
-
 ```{r, fig.width=10,fig.height=5}
 ggarrange(p1_index,p2_index,ncol = 2)
 ggsave("NSCA_abstract.png")
 ```
-
-
-
 
 ```{r}
 predictions <- ggpredict(model2, terms = c("week", "Index2 [0, 10, 20]", "sex"))
@@ -596,15 +552,10 @@ ggplot(predictions, aes(x = x, y = predicted)) +
   theme_minimal()
 ```
 
-
-
-
-
 ```{r}
 library(flexplot)
 compare_performance(model1,model2, model3,model4)
 ```
-
 
 ```{r}
 tab_model(model1,model2,model3,model4, show.aic = TRUE, p.style ="numeric_stars",
@@ -647,13 +598,11 @@ p4_coef <- plot_model(model4, show.values = TRUE,
 
 ```
 
-
 ```{r, fig.height=10, warning=FALSE}
 
 ggarrange(p1_coef,p2_coef,p3_coef,p4_coef, ncol=2,nrow = 2)
 ggsave("inter_coeff.png")
 ```
-
 
 ```{r}
 
@@ -669,13 +618,10 @@ model4_noi <- lmer(jump_height_cm ~ week + Index4*sex   +
                    (1 + countermovement_depth|name) + (1 + countermovement_depth|session_id), data=df)
 ```
 
-
 ```{r}
 tab_model(model1,model2,model3,model4, show.aic = TRUE, p.style ="numeric_stars",
           collapse.ci = TRUE)
 ```
-
-
 
 ```{r}
 library(ggeffects)
@@ -701,8 +647,6 @@ ggplot(interaction_predictions, aes(x = x, y = predicted, color = group)) +
     scale_color_brewer(palette = "Set1")
 ```
 
-
-
 ```{r}
 triple_interaction_predictions <- ggpredict(model1, terms = c("week", "Index1", "sex"))
 
@@ -715,15 +659,10 @@ ggplot(triple_interaction_predictions, aes(x = x, y = predicted, color = group))
     scale_color_brewer(palette = "Set1")
 ```
 
-
-
-
 ```{r}
 library(ggeffects)
 ggpredict(model2)
 ```
-
-
 
 ```{r}
 # Generate the triple interaction predictions
@@ -741,8 +680,6 @@ p_m1 <- ggplot(triple_interaction_predictions, aes(x = x, y = predicted, color =
 p_m1
 ```
 
-
-
 ```{r}
 # Generate the triple interaction predictions
 triple_interaction_predictions <- ggpredict(model2, terms = c("week", "Index2", "sex"))
@@ -759,13 +696,9 @@ p_m2 <- ggplot(triple_interaction_predictions, aes(x = x, y = predicted, color =
 p_m2
 ```
 
-
-
-
 ```{r, fig.height=12}
 check_model(modelall)
 ```
-
 
 # RSI
 
@@ -789,7 +722,6 @@ model4_m_rsi <- lmer(m_rsi ~ week*Index4*sex   +
               control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 ```
 
-
 ```{r}
 tab_model(model1_m_rsi,model2_m_rsi,model3_m_rsi,model4_m_rsi,
           show.est = TRUE, 
@@ -799,10 +731,10 @@ tab_model(model1_m_rsi,model2_m_rsi,model3_m_rsi,model4_m_rsi,
           digits = 3)
 ```
 
-
 # Predicted values
 
 Jump Height
+
 ```{r}
 # Generate predictions over time for Index2 values of 0, 10, and 20 by sex
 dat <- ggpredict(model3, terms = c("week [0:80]", "Index3 [0, 10, 20]", "sex"))
@@ -825,6 +757,7 @@ summary_df %>% filter(facet == "Male")
 ```
 
 Jump Height
+
 ```{r}
 # Generate predictions over time for Index2 values of 0, 10, and 20 by sex
 dat <- ggpredict(model3_m_rsi, terms = c("week [0:80]", "Index3 [0, 10, 20]", "sex"))
@@ -846,7 +779,6 @@ summary_df <- dat_df %>%
 summary_df %>% filter(facet == "Male")
 ```
 
-
 ```{r}
 dat <- ggpredict(model3, terms = c("week", "Index3 [0, 10, 20]", "sex [Male]"))
 p_res1 <- plot(dat, facets = TRUE,
@@ -865,7 +797,6 @@ p_res2 <-  plot(dat, facets = TRUE,
   facet_wrap(~facet+group) + theme_classic()
 #ggsave("index2predicted.png")
 ```
-
 
 ```{r}
 ggarrange(p_res1,p_res2,nrow = 2,labels = c("A","B"))
@@ -900,7 +831,6 @@ df$Index4_peak <- ifelse(df$A_peak > 0 & df$B_peak > 0,
 
 ```
 
-
 ```{r}
 
 #model0 <- lmer(jump_height_cm ~ week + Age + sex + mass + (1 + countermovement_depth|name), data=df)
@@ -924,7 +854,6 @@ model4_peak  <- lmer(jump_height_cm ~ week*Index4_peak*sex   +
 tab_model(model1_peak ,model2_peak ,model3_peak ,model4_peak , show.est = FALSE)
 ```
 
-
 ```{r}
 
 model1_peak_m_rsi <- lmer(m_rsi ~ week*Index1_peak*sex  + 
@@ -945,22 +874,15 @@ model4_peak_m_rsi <- lmer(m_rsi ~ week*Index4_peak*sex   +
               control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 ```
 
-
 ```{r}
 tab_model(model1_peak_m_rsi ,model2_peak_m_rsi ,model3_peak_m_rsi ,model4_peak_m_rsi , show.est = TRUE)
 ```
-
 
 ```{r}
 tab_model(model3 ,model3_peak, show.est = TRUE)
 ```
 
-
-
-## NSCA abstract df <- df %>% mutate(weight_N)
-
-
-
+## NSCA abstract df \<- df %\>% mutate(weight_N)
 
 ```{r}
 df_female <- df %>% filter(sex == "Female")
@@ -972,7 +894,6 @@ model_fem <- lmer(jump_height_cm ~ week*peak_relative_braking_force  +
 summary(model_fem)
 ```
 
-
 ```{r}
 model2 <- lmer(jump_height_cm ~ week*peak_relative_braking_force*sex  + 
                     (1 + countermovement_depth|name) + (1 + countermovement_depth|session_id), data=df,
@@ -981,7 +902,6 @@ model2 <- lmer(jump_height_cm ~ week*peak_relative_braking_force*sex  +
 
 summary(model2)
 ```
-
 
 ```{r}
 model3 <- lmer(peak_relative_propulsive_force ~ week*peak_relative_braking_force*sex  + 
@@ -992,11 +912,9 @@ model3 <- lmer(peak_relative_propulsive_force ~ week*peak_relative_braking_force
 summary(model3)
 ```
 
-
 ```{r}
 df$flight_time <- as.numeric(df$flight_time)
 ```
-
 
 ```{r}
 model4 <- lmer(flight_time ~ week*peak_relative_braking_force*sex  + 
@@ -1006,7 +924,6 @@ model4 <- lmer(flight_time ~ week*peak_relative_braking_force*sex  +
 
 summary(model4)
 ```
-
 
 ```{r, fig.height=8}
 library(ggplot2)
@@ -1036,12 +953,9 @@ grid.arrange(plot_a, plot_b, ncol = 1)
 
 ```
 
-
-
 ```{r}
 tab_model(model2,model3,digits = 3)
 ```
-
 
 ```{r}
 # Install required packages if not already installed
@@ -1055,8 +969,6 @@ library(tensorflow)
 
 ```
 
-
-
 ```{r}
 df <- df %>%
   mutate(Index3_cat = cut(Index3, breaks = c(-Inf, 2.5, 7.5, 12.5, 17.5, Inf),
@@ -1067,7 +979,6 @@ label_vector <- df$jump_height_cm
 table(df$Index3_cat, df$sex)
 
 ```
-
 
 ```{r}
 # Load necessary libraries
@@ -1110,7 +1021,6 @@ print(xgb_cv_model)
 
 ```
 
-
 ```{r}
 # Ensure Index3 (asymmetry) is removed before expanding grid
 asymmetry_test <- df %>%
@@ -1135,7 +1045,6 @@ print(asymmetry_test)
 
 ```
 
-
 ```{r}
 # Load ggplot2 for visualization
 library(ggplot2)
@@ -1157,6 +1066,3 @@ ggplot(asymmetry_test, aes(x = Index3, y = Predicted_Jump_Height, color = as.fac
 
 
 ```
-
-
-
