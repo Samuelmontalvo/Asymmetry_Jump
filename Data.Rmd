@@ -64,16 +64,10 @@ df
 
 ```{r, message=FALSE}
 df_demo <- load_demographics()
-
 Demographics <- janitor::clean_names(Demographics)
 
-Demographics <- Demographics %>% rename(name = athlete, DOB = date_of_birth_dd_mm_yy) %>% 
-  select(name, DOB, sex, height)
-
-Demographics$DOB <- dmy(Demographics$DOB)
-
-
-Demographics
+Demographics <- Demographics %>%
+  select(name, dob, sex, height)
 ```
 
 ```{r}
@@ -89,18 +83,16 @@ names(df)
 ```{r}
 library(lubridate)
 
-
 # Convert date to Date format (if it's not already)
 df2$date <- as.Date(df2$date)
 
 # Calculate age, handling NA values in DOB
-df2$Age <- ifelse(!is.na(df2$DOB), interval(df2$DOB, df2$date) / years(1), NA)
+df2$Age <- ifelse(!is.na(df2$dob), interval(df2$dob, df2$date) / years(1), NA)
 
-# View the updated data frame with selected columns
-df2 %>% select(date, name, DOB, Age)
-```
+# View the updated data frame with selected columns (opcional, puedes incluirlo o no)
+df2 %>% select(date, name, dob, Age)
 
-```{r}
+
 df3 <- inner_join(df, Demographics, by=c("name"))
 df3
 ```
