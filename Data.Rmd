@@ -121,7 +121,6 @@ first_observation_df <- df %>%
   slice(1)
 
 
-
 table1(~ week + Age + mass + jump_height_cm + m_rsi | sex, data=first_observation_df)
 ```
 
