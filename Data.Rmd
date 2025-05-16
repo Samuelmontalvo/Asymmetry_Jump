@@ -31,8 +31,9 @@ source("R/load_data.R")
 df_jump <- load_jump_data()
 df <- df %>% select_if(~ !all(is.na(.)))
 
-df <- df %>% select(-TestId)
-
+if("TestId" %in% names(df)){
+  df <- df %>% select(-TestId)
+}
 #cleans column names
 df <- janitor::clean_names(df)
 
