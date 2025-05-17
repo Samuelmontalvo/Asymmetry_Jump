@@ -488,6 +488,24 @@ model1noa <- lmer(jump_height_cm ~ week*Index1  + (1|name) + (1 + countermovemen
 ```{r}
 anova(model1a, model1noa)
 ```
+```{r}
+## Covariates: Age
+model1a <- lmer(
+  jump_height_cm ~ week * Index1 + Age +
+    (1 | name) + (1 + countermovement_depth | session_id),
+  data = df2
+)
+
+## Without Age
+model1noa <- lmer(
+  jump_height_cm ~ week * Index1 +
+    (1 | name) + (1 + countermovement_depth | session_id),
+  data = df2
+)
+
+## Model comparison
+anova(model1a, model1noa)
+```
 
 # Jump Height
 
