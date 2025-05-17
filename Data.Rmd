@@ -767,7 +767,7 @@ p_m2
 ```
 
 ```{r, fig.height=12} 
-check_model(modelall)
+check_model(model_all)
 ```
 
 # RSI
