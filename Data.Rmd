@@ -26,94 +26,15 @@ library(ggeffects)
 ## Intro
 
 ```{r, warning=FALSE, message=FALSE}
-# Load and clean demographics
-df_demo <- load_demographics()
-df_demo <- janitor::clean_names(df_demo)
-
-Demographics <- df_demo %>%
-  select(
-    athlete,                 # original participant name
-    date_of_birth_dd_mm_yy,  # original DOB
-    sex,
-    height
-  ) %>%
-  rename(
-    name = athlete,
-    dob  = date_of_birth_dd_mm_yy
-  ) %>%
-  mutate(
-    dob = lubridate::dmy(dob)  # convert DOB string to Date
-  )
-
-# Load and clean jump data (including propulsive forces)
-df_jump <- load_jump_data()
-
-df <- df_jump %>%
-  janitor::clean_names() %>%
-  select(
-    name,
-    date,
-    type,                      # jump type for descriptive tables
-    tags,                      # tags for descriptive tables
-    system_weight,             # system weight in N
-    jump_height,               # jump height in m
-    rsi,                       # reactive strength index
-    m_rsi,                     # modified RSI
-    peak_propulsive_force,     # peak force in propulsive phase
-    left_avg_propulsive_force, # average left propulsive force
-    right_avg_propulsive_force # average right propulsive force
-  ) %>%
-  mutate(
-    # Parse numeric columns robustly
-    peak_propulsive_force      = readr::parse_number(as.character(peak_propulsive_force)),
-    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
-    right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
-
-    # Date transformations
-    date       = lubridate::dmy(date),
-    month      = factor(format(date, "%Y-%m")),
-    session_id = interaction(name, date),
-    week       = lubridate::isoweek(date),
-
-    # Derived variables
-    mass           = system_weight / 9.81,  # convert N to kg
-    jump_height_cm = jump_height * 100      # convert m to cm
-  ) %>%
-  filter(!is.na(date)) %>%
-  tidyr::drop_na(
-    peak_propulsive_force,
-    left_avg_propulsive_force,
-    right_avg_propulsive_force
-  )
-
-# Join with demographics
-df2 <- inner_join(df, Demographics, by = "name")
-
-# Quick check
-glimpse(df2)
-```
-
-```{r, message=FALSE}
 ## Load and clean demographics
-df_demo <- load_demographics()
-df_demo <- janitor::clean_names(df_demo)
-
+df_demo <- load_demographics() %>% 
+  janitor::clean_names()
 Demographics <- df_demo %>%
-  select(
-    athlete,                   
-    date_of_birth_dd_mm_yy,    
-    sex,
-    height
-  ) %>%
-  rename(
-    name = athlete,
-    dob  = date_of_birth_dd_mm_yy
-  ) %>%
-  mutate(
-    dob = lubridate::dmy(dob)
-  )
+  select(athlete, date_of_birth_dd_mm_yy, sex, height) %>%
+  rename(name = athlete, dob = date_of_birth_dd_mm_yy) %>%
+  mutate(dob = lubridate::dmy(dob))
 
-## Prepare jump data and clean numeric columns
+## Load and clean jump data (añadiendo peak_propulsive_force)
 df_jump <- load_jump_data()
 
 df <- df_jump %>%
@@ -123,15 +44,17 @@ df <- df_jump %>%
     date,
     type,
     tags,
-    system_weight,     # from "System Weight"
-    jump_height,       # from "Jump Height"
-    rsi,               # from "RSI"
-    m_rsi,             # from "mRSI"
+    system_weight,
+    jump_height,
+    rsi,
+    m_rsi,
+    peak_propulsive_force,         # <— Asegúrate de incluirla
     left_avg_propulsive_force,
     right_avg_propulsive_force
   ) %>%
   mutate(
-    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
+    peak_propulsive_force      = readr::parse_number(as.character(peak_propulsive_force)),
+    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force, "N/A")),
     right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
     date       = lubridate::dmy(date),
     month      = factor(format(date, "%Y-%m")),
@@ -141,12 +64,14 @@ df <- df_jump %>%
     jump_height_cm = jump_height * 100
   ) %>%
   filter(!is.na(date)) %>%
-  tidyr::drop_na(left_avg_propulsive_force, right_avg_propulsive_force)
+  tidyr::drop_na(peak_propulsive_force,
+                 left_avg_propulsive_force,
+                 right_avg_propulsive_force)
 
-## Join with demographics
+## Join con demographics
 df2 <- inner_join(df, Demographics, by = "name")
 
-## Verify
+## Verifica
 glimpse(df2)
 ```
 
