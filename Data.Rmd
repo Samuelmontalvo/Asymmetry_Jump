@@ -27,14 +27,13 @@ library(ggeffects)
 
 ```{r, warning=FALSE, message=FALSE}
 ## Load and clean demographics
-df_demo <- load_demographics() %>% 
-  janitor::clean_names()
+df_demo <- load_demographics() %>% janitor::clean_names()
 Demographics <- df_demo %>%
   select(athlete, date_of_birth_dd_mm_yy, sex, height) %>%
   rename(name = athlete, dob = date_of_birth_dd_mm_yy) %>%
   mutate(dob = lubridate::dmy(dob))
 
-## Load and clean jump data (añadiendo peak_propulsive_force)
+## Load and clean jump data (including countermovement_depth)
 df_jump <- load_jump_data()
 
 df <- df_jump %>%
@@ -48,30 +47,40 @@ df <- df_jump %>%
     jump_height,
     rsi,
     m_rsi,
-    peak_propulsive_force,         # <— Asegúrate de incluirla
+    peak_propulsive_force,
     left_avg_propulsive_force,
-    right_avg_propulsive_force
+    right_avg_propulsive_force,
+    countermovement_depth     # <— Add here
   ) %>%
   mutate(
+    # Parse numeric strings
     peak_propulsive_force      = readr::parse_number(as.character(peak_propulsive_force)),
-    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force, "N/A")),
+    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
     right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
+    countermovement_depth      = readr::parse_number(as.character(countermovement_depth)),
+
+    # Date variables
     date       = lubridate::dmy(date),
     month      = factor(format(date, "%Y-%m")),
     session_id = interaction(name, date),
     week       = lubridate::isoweek(date),
+
+    # Derived variables
     mass           = system_weight / 9.81,
     jump_height_cm = jump_height * 100
   ) %>%
   filter(!is.na(date)) %>%
-  tidyr::drop_na(peak_propulsive_force,
-                 left_avg_propulsive_force,
-                 right_avg_propulsive_force)
+  tidyr::drop_na(
+    peak_propulsive_force,
+    left_avg_propulsive_force,
+    right_avg_propulsive_force,
+    countermovement_depth
+  )
 
-## Join con demographics
+## Join with demographics
 df2 <- inner_join(df, Demographics, by = "name")
 
-## Verifica
+## Quick check
 glimpse(df2)
 ```
 
@@ -429,6 +438,39 @@ model1nom <- lmer(jump_height_cm ~ week*Index1  + (1|name) + (1 + countermovemen
 ```
 
 ```{r}
+anova(model1m, model1nom)
+```
+```{r}
+## Compute asymmetry indices in df2
+df2 <- df2 %>%
+  mutate(
+    A      = pmax(right_avg_propulsive_force, left_avg_propulsive_force),
+    B      = pmin(right_avg_propulsive_force, left_avg_propulsive_force),
+    Index1 = abs(A - B) / A * 100,
+    Index2 = (A - B) / (A + B) * 100,
+    Index3 = (45 - atan(B / A) * (180 / pi)) * 100 / 90,
+    Index4 = ifelse(A > 0 & B > 0, log(A / B) * 100, NA)
+  )
+
+## Quick check
+colnames(df2)
+```
+```{r}
+## Covariates: Mass
+model1m <- lmer(
+  jump_height_cm ~ week * Index1 + mass +
+    (1 | name) + (1 + countermovement_depth | session_id),
+  data = df2
+)
+
+## Without mass
+model1nom <- lmer(
+  jump_height_cm ~ week * Index1 +
+    (1 | name) + (1 + countermovement_depth | session_id),
+  data = df2
+)
+
+## Model comparison
 anova(model1m, model1nom)
 ```
 
