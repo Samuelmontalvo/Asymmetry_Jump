@@ -625,7 +625,7 @@ ggplot(predictions, aes(x = x, y = predicted)) +
 ```{r}
 library(flexplot)
 compare_performance(model1,model2, model3,model4)
-```
+``` 
 
 ```{r}
 tab_model(model1,model2,model3,model4, show.aic = TRUE, p.style ="numeric_stars",
