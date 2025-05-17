@@ -766,7 +766,7 @@ p_m2 <- ggplot(triple_interaction_predictions, aes(x = x, y = predicted, color =
 p_m2
 ```
 
-```{r, fig.height=12}
+```{r, fig.height=12} 
 check_model(modelall)
 ```
 
