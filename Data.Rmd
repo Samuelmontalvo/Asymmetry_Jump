@@ -129,18 +129,22 @@ names(df)
 ```{r}
 library(lubridate)
 
-# Convert date to Date format (if it's not already)
-df2$date <- as.Date(df2$date)
+# 1) Ensure date is Date type
+df2 <- df2 %>%
+  mutate(
+    date = as.Date(date)
+  )
 
-# Calculate age, handling NA values in DOB
-df2$Age <- ifelse(!is.na(df2$dob), interval(df2$dob, df2$date) / years(1), NA)
+# 2) Calculate age in years from dob to test date
+df2 <- df2 %>%
+  mutate(
+    Age = interval(dob, date) / years(1)
+  )
 
-# View the updated data frame with selected columns (opcional, puedes incluirlo o no)
-df2 %>% select(date, name, dob, Age)
-
-
-df3 <- inner_join(df, Demographics, by=c("name"))
-df3
+# 3) Optionally inspect the new column
+df2 %>%
+  select(name, date, dob, Age) %>%
+  glimpse()
 ```
 
 ```{r}
