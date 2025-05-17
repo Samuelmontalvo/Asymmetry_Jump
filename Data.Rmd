@@ -78,41 +78,39 @@ Demographics <- df_demo %>%
     dob  = date_of_birth_dd_mm_yy
   ) %>%
   mutate(
-    # Convert DOB string to Date
-    dob = lubridate::dmy(dob)
+    dob = lubridate::dmy(dob)  # convert DOB to Date
   )
 
-## Prepare jump data and clean numeric columns
+## Prepare jump data and clean numeric columns (including type and tags)
 df_jump <- load_jump_data()
+
 df <- df_jump %>%
   janitor::clean_names() %>%
   select(
     name,
     date,
+    type,                        # include type for later tables
+    tags,                        # include tags for later tables
     left_avg_propulsive_force,
     right_avg_propulsive_force
   ) %>%
   mutate(
-    # Recode literal "N/A" to NA
-    left_avg_propulsive_force  = na_if(left_avg_propulsive_force,  "N/A"),
-    right_avg_propulsive_force = na_if(right_avg_propulsive_force, "N/A"),
-    # parse_number strips non-numeric chars and converts to numeric
-    left_avg_propulsive_force  = readr::parse_number(left_avg_propulsive_force),
-    right_avg_propulsive_force = readr::parse_number(right_avg_propulsive_force),
-    # Date transforms
+    # recode "N/A" to NA, then parse numbers
+    left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
+    right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
+    # date transforms
     date       = lubridate::dmy(date),
     month      = factor(format(date, "%Y-%m")),
     session_id = interaction(name, date),
     week       = lubridate::isoweek(date)
   ) %>%
   filter(!is.na(date)) %>%
-  # Drop rows missing either force measurement
   tidyr::drop_na(left_avg_propulsive_force, right_avg_propulsive_force)
 
 ## Join with demographics
 df2 <- inner_join(df, Demographics, by = "name")
 
-## Check the structure and ensure no NAs remain in force columns
+## Verify that df2 now contains type and tags along with numeric forces
 glimpse(df2)
 ```
 
