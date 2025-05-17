@@ -26,41 +26,39 @@ library(ggeffects)
 ## Intro
 
 ```{r, warning=FALSE, message=FALSE}
+## Intro (revised)
+
 source("R/load_data.R")
 
+# 1) Load raw data and clean column names
 df_jump <- load_jump_data()
-df <- df %>% select_if(~ !all(is.na(.)))
+df <- df_jump %>%
+  janitor::clean_names()
 
-if("TestId" %in% names(df)){
-  df <- df %>% select(-TestId)
-}
-#cleans column names
-df <- janitor::clean_names(df)
+# 2) Select only the necessary columns (including 'name')
+df <- df %>%
+  select(
+    name,
+    date,
+    left_avg_propulsive_force,
+    right_avg_propulsive_force
+  )
 
+# 3) Date transformations and derived variables
+df <- df %>%
+  mutate(
+    date       = lubridate::dmy(date),
+    month      = factor(format(date, "%Y-%m")),
+    session_id = interaction(name, date),
+    week       = lubridate::isoweek(date)
+  ) %>%
+  filter(!is.na(date))
 
-# Date manipulation
-# Ensure that the Date is in the correct Date format
-# Assuming the date format in your data is day/month/year
-df$date <- dmy(df$date)
+# 4) Perform inner join with demographics
+df2 <- inner_join(df, Demographics, by = "name")
 
-# Remove rows with NA dates
-df <- df[!is.na(df$date), ]
-
-# Create a new variable with year and month, and convert it to a factor
-df$month <- format(df$date, "%Y-%m")
-df$month <- factor(df$month)
-
-#training session
-df$session_id <- interaction(df$name, df$date)
-
-
-# variables to cointiinous
-df$left_avg_propulsive_force <- as.numeric(df$left_avg_propulsive_force)
-df$right_avg_propulsive_force <- as.numeric(df$right_avg_propulsive_force)
-
-df$week <- isoweek(df$date)
-
-df
+# 5) Display the result
+df2
 ```
 
 ```{r, message=FALSE}
