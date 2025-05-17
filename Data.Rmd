@@ -68,8 +68,8 @@ df_demo <- janitor::clean_names(df_demo)
 
 Demographics <- df_demo %>%
   select(
-    athlete,                   # original participant name
-    date_of_birth_dd_mm_yy,    # original DOB
+    athlete,                   
+    date_of_birth_dd_mm_yy,    
     sex,
     height
   ) %>%
@@ -78,10 +78,10 @@ Demographics <- df_demo %>%
     dob  = date_of_birth_dd_mm_yy
   ) %>%
   mutate(
-    dob = lubridate::dmy(dob)  # convert DOB to Date
+    dob = lubridate::dmy(dob)
   )
 
-## Prepare jump data and clean numeric columns (including type and tags)
+## Prepare jump data and clean numeric columns
 df_jump <- load_jump_data()
 
 df <- df_jump %>%
@@ -89,20 +89,24 @@ df <- df_jump %>%
   select(
     name,
     date,
-    type,                        # include type for later tables
-    tags,                        # include tags for later tables
+    type,
+    tags,
+    system_weight,     # from "System Weight"
+    jump_height,       # from "Jump Height"
+    rsi,               # from "RSI"
+    m_rsi,             # from "mRSI"
     left_avg_propulsive_force,
     right_avg_propulsive_force
   ) %>%
   mutate(
-    # recode "N/A" to NA, then parse numbers
     left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
     right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
-    # date transforms
     date       = lubridate::dmy(date),
     month      = factor(format(date, "%Y-%m")),
     session_id = interaction(name, date),
-    week       = lubridate::isoweek(date)
+    week       = lubridate::isoweek(date),
+    mass           = system_weight / 9.81,
+    jump_height_cm = jump_height * 100
   ) %>%
   filter(!is.na(date)) %>%
   tidyr::drop_na(left_avg_propulsive_force, right_avg_propulsive_force)
@@ -110,7 +114,7 @@ df <- df_jump %>%
 ## Join with demographics
 df2 <- inner_join(df, Demographics, by = "name")
 
-## Verify that df2 now contains type and tags along with numeric forces
+## Verify
 glimpse(df2)
 ```
 
@@ -146,7 +150,14 @@ df2 %>%
 ```
 
 ```{r}
-table1(~ type + tags,data=df3)
+# (Re)define df3 a partir de df2, si lo deseas
+df3 <- df2
+
+# Ahora sí table1 funciona porque df3 tiene type y tags
+library(table1)
+label(df3$type) <- "Jump Type"
+label(df3$tags) <- "Tags"
+table1(~ type + tags, data = df3)
 ```
 
 ```{r}
