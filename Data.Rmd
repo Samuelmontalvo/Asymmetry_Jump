@@ -417,7 +417,7 @@ ggarrange(ps_1,ps_2,ps_3,ps_4)
 
 # Covariates
 
-## Mass
+## Mass 
 
 ```{r}
 #mass
