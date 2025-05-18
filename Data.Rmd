@@ -1062,10 +1062,10 @@ table(df$Index3_cat, df$sex)
 ```{r}
 # Load necessary libraries
 library(xgboost)
-library(caret)  # For cross-validation
+library(caret) # For cross-validation
 
 # Convert data to matrix format for XGBoost
-feature_matrix <- as.matrix(df %>% select(-jump_height_cm))
+feature_matrix <- df %>% select(-jump_height_cm)
 label_vector <- df$jump_height_cm
 
 # Set up 10-fold cross-validation
@@ -1088,7 +1088,7 @@ tune_grid <- expand.grid(
 
 # Train XGBoost with 10-fold CV
 xgb_cv_model <- train(
-  x = feature_matrix, 
+  x = feature_matrix,
   y = label_vector,
   method = "xgbTree",
   trControl = train_control,
@@ -1097,7 +1097,6 @@ xgb_cv_model <- train(
 
 # View best model performance
 print(xgb_cv_model)
-
 ```
 
 ```{r}
