@@ -52,7 +52,8 @@ df <- df_jump %>%
     right_avg_propulsive_force,
     countermovement_depth,
     left_force_at_peak_propulsive_force,
-    right_force_at_peak_propulsive_force
+    right_force_at_peak_propulsive_force,
+    peak_relative_braking_force
   ) %>%
   mutate(
     # Parse numeric strings
@@ -62,6 +63,7 @@ df <- df_jump %>%
     countermovement_depth     = readr::parse_number(as.character(countermovement_depth)),
     left_force_at_peak_propulsive_force = readr::parse_number(as.character(left_force_at_peak_propulsive_force)),
     right_force_at_peak_propulsive_force = readr::parse_number(as.character(right_force_at_peak_propulsive_force)),
+    peak_relative_braking_force = readr::parse_number(as.character(peak_relative_braking_force)),
 
     # Date variables
     date     = lubridate::dmy(date),
@@ -80,7 +82,8 @@ df <- df_jump %>%
     right_avg_propulsive_force,
     countermovement_depth,
     left_force_at_peak_propulsive_force,
-    right_force_at_peak_propulsive_force
+    right_force_at_peak_propulsive_force,
+    peak_relative_braking_force
   )
 
 ## Join with demographics
