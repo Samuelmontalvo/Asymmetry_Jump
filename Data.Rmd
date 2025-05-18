@@ -50,23 +50,27 @@ df <- df_jump %>%
     peak_propulsive_force,
     left_avg_propulsive_force,
     right_avg_propulsive_force,
-    countermovement_depth     # <— Add here
+    countermovement_depth,
+    left_force_at_peak_propulsive_force,
+    right_force_at_peak_propulsive_force
   ) %>%
   mutate(
     # Parse numeric strings
-    peak_propulsive_force      = readr::parse_number(as.character(peak_propulsive_force)),
+    peak_propulsive_force     = readr::parse_number(as.character(peak_propulsive_force)),
     left_avg_propulsive_force  = readr::parse_number(na_if(left_avg_propulsive_force,  "N/A")),
     right_avg_propulsive_force = readr::parse_number(na_if(right_avg_propulsive_force, "N/A")),
-    countermovement_depth      = readr::parse_number(as.character(countermovement_depth)),
+    countermovement_depth     = readr::parse_number(as.character(countermovement_depth)),
+    left_force_at_peak_propulsive_force = readr::parse_number(as.character(left_force_at_peak_propulsive_force)),
+    right_force_at_peak_propulsive_force = readr::parse_number(as.character(right_force_at_peak_propulsive_force)),
 
     # Date variables
-    date       = lubridate::dmy(date),
-    month      = factor(format(date, "%Y-%m")),
+    date     = lubridate::dmy(date),
+    month    = factor(format(date, "%Y-%m")),
     session_id = interaction(name, date),
-    week       = lubridate::isoweek(date),
+    week     = lubridate::isoweek(date),
 
     # Derived variables
-    mass           = system_weight / 9.81,
+    mass         = system_weight / 9.81,
     jump_height_cm = jump_height * 100
   ) %>%
   filter(!is.na(date)) %>%
@@ -74,7 +78,9 @@ df <- df_jump %>%
     peak_propulsive_force,
     left_avg_propulsive_force,
     right_avg_propulsive_force,
-    countermovement_depth
+    countermovement_depth,
+    left_force_at_peak_propulsive_force,
+    right_force_at_peak_propulsive_force
   )
 
 ## Join with demographics
@@ -82,9 +88,7 @@ df2 <- inner_join(df, Demographics, by = "name")
 
 ## Quick check
 glimpse(df2)
-```
 
-```{r}
 df2 <- inner_join(df, Demographics, by=c("name"))
 
 df2
