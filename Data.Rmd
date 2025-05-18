@@ -54,7 +54,8 @@ df <- df_jump %>%
     left_force_at_peak_propulsive_force,
     right_force_at_peak_propulsive_force,
     peak_relative_braking_force,
-    peak_relative_propulsive_force
+    peak_relative_propulsive_force,
+    flight_time
   ) %>%
   mutate(
     # Parse numeric strings
@@ -66,6 +67,7 @@ df <- df_jump %>%
     right_force_at_peak_propulsive_force = readr::parse_number(as.character(right_force_at_peak_propulsive_force)),
     peak_relative_braking_force = readr::parse_number(as.character(peak_relative_braking_force)),
     peak_relative_propulsive_force = readr::parse_number(as.character(peak_relative_propulsive_force)),
+    flight_time               = readr::parse_number(as.character(flight_time)),
 
     # Date variables
     date     = lubridate::dmy(date),
@@ -86,7 +88,8 @@ df <- df_jump %>%
     left_force_at_peak_propulsive_force,
     right_force_at_peak_propulsive_force,
     peak_relative_braking_force,
-    peak_relative_propulsive_force
+    peak_relative_propulsive_force,
+    flight_time
   )
 
 ## Join with demographics
