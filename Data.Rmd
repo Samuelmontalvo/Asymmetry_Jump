@@ -91,10 +91,6 @@ df2 <- inner_join(df, Demographics, by = "name")
 
 ## Quick check
 glimpse(df2)
-
-df2 <- inner_join(df, Demographics, by=c("name"))
-
-df2
 ```
 
 ```{r}
