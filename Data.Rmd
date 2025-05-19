@@ -1099,47 +1099,40 @@ xgb_cv_model <- train(
 print(xgb_cv_model)
 ```
 
-```{r xgb‐prediction‐grid, message=FALSE}
-# Ensure Index3 (asymmetry) is removed before expanding grid
-asymmetry_test <- df %>%
-  group_by(sex) %>%
-  slice_head(n = 1) %>%  # Take one example per sex
-  ungroup() %>%
-  select(-jump_height_cm, -Index3) %>%  # Remove Index3 before expanding
-  expand_grid(Index3 = c(0, 5, 10, 15, 20))  # Test different asymmetry values
-
-# Ensure column order matches training data
-feature_names <- colnames(feature_matrix)
-asymmetry_test <- asymmetry_test[, feature_names]
-
-# Convert to matrix for XGBoost prediction
-asymmetry_matrix <- as.matrix(asymmetry_test)
-
-# Make predictions
-asymmetry_test$Predicted_Jump_Height <- predict(xgb_cv_model, asymmetry_matrix)
-
-# View results
-print(asymmetry_test)
+```{r xgboost_prediction, echo=FALSE, eval=FALSE}
+# ## XGBoost prediction code temporarily disabled pending debug
+# # 1) Build test grid of Index3 values
+# # 2) Manually one-hot encode sex (sexFemale, sexMale)
+# # 3) Fill missing feature columns with zeros
+# # 4) Reorder to match model feature order
+# # 5) Convert to matrix and call predict(xgb_cv_model, …)
+# # These steps currently error with:
+# # “Feature names stored in object and newdata are different!”
 ```
 
-```{r}
-# Load ggplot2 for visualization
-library(ggplot2)
-
-# Plot asymmetry vs. predicted jump height
-ggplot(asymmetry_test, aes(x = Index3, y = Predicted_Jump_Height, color = as.factor(sex))) +
-  geom_line(size = 1.2) +
-  geom_point(size = 3) +
-  geom_ribbon(aes(ymin = Predicted_Jump_Height - 1.96 * 1.556, ymax = Predicted_Jump_Height + 1.96 * 1.556, fill = as.factor(sex)), alpha = 0.2) +  # 95% CI using RMSE
-  labs(
-    title = "Predicted Jump Height vs. Asymmetry (0%, 5%, 10%, 15%, 20%) with 95% CI",
-    x = "Asymmetry (%)",
-    y = "Predicted Jump Height (cm)",
-    color = "Sex",
-    fill = "Sex"
-  ) +
-  theme_bw() +
-  facet_grid(~sex)
-
-
+```{r plot_asymmetry_pred, echo=FALSE, eval=FALSE}
+# ## Plotting code disabled pending debug of XGBoost predictions
+# library(ggplot2)
+#
+# ggplot(asymmetry_test, aes(x = Index3, y = Predicted_Jump_Height, color = as.factor(sex))) +
+#   geom_line(size = 1.2) +
+#   geom_point(size = 3) +
+#   geom_ribbon(aes(
+#     ymin = Predicted_Jump_Height - 1.96 * 1.556,
+#     ymax = Predicted_Jump_Height + 1.96 * 1.556,
+#     fill = as.factor(sex)
+#   ), alpha = 0.2) +
+#   labs(
+#     title = "Predicted Jump Height vs. Asymmetry (0%, 5%, 10%, 15%, 20%) with 95% CI",
+#     x = "Asymmetry (%)",
+#     y = "Predicted Jump Height (cm)",
+#     color = "Sex",
+#     fill = "Sex"
+#   ) +
+#   theme_bw() +
+#   facet_grid(~sex)
 ```
+```
+## Mixed-Effects and Mediation Analysis
+
+
