@@ -1099,7 +1099,7 @@ xgb_cv_model <- train(
 print(xgb_cv_model)
 ```
 
-```{r}
+```{r xgb‐prediction‐grid, message=FALSE}
 # Ensure Index3 (asymmetry) is removed before expanding grid
 asymmetry_test <- df %>%
   group_by(sex) %>%
@@ -1120,7 +1120,6 @@ asymmetry_test$Predicted_Jump_Height <- predict(xgb_cv_model, asymmetry_matrix)
 
 # View results
 print(asymmetry_test)
-
 ```
 
 ```{r}
