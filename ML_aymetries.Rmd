@@ -52,15 +52,15 @@ print("Libraries loaded successfully.")
 # --- Load Raw Data Files ---
 
 # Define file paths (adjust if files are in a subfolder, e.g., "data/")
-jumps_file <- "Wushu_Malaysia_1yr_Jumps.csv"
-demographics_file <- "Demographics.csv" # Assuming CSV, adjust if it's Excel
+#jumps_file <- "Wushu_Malaysia_1yr_Jumps.csv"
+#demographics_file <- "Demographics.csv" # Assuming CSV, adjust if it's Excel
 
 # Load the jumps data
-jumps_raw_df <- read_csv(jumps_file)
+#jumps_raw_df <- read_csv(jumps_file)
 
 # Load the demographics data
 # Use read_csv for CSV or read_excel from readxl package for Excel files
-demographics_raw_df <- read_csv(demographics_file)
+#demographics_raw_df <- read_csv(demographics_file)
 # If it's an Excel file, use:
 # demographics_raw_df <- read_excel(demographics_file)
 
@@ -71,7 +71,7 @@ demographics_raw_df <- read_csv(demographics_file)
 # str(demographics_raw_df)
 
 # Confirmation message (optional)
-print("Raw data loaded.")
+#print("Raw data loaded.")
 # ``` # Uncomment triple backticks for use in Rmd
 ```
 
@@ -82,8 +82,8 @@ print("Raw data loaded.")
 
 # 1. Clean Column Names
 # Using janitor::clean_names on both raw dataframes
-jumps_df <- janitor::clean_names(jumps_raw_df)
-demographics_df <- janitor::clean_names(demographics_raw_df)
+jumps_df <- janitor::clean_names(df_jump)
+demographics_df <- janitor::clean_names(df_demo)
 
 # Remove potentially empty columns from jumps data (as in PDF source 1)
 jumps_df <- jumps_df %>% select_if(~!all(is.na(.)))
